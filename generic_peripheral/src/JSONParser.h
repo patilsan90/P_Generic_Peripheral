@@ -11,7 +11,7 @@ class JSONParser
 {
 public:
   int total_pairs;
-  key_val pairs[1];
+  key_val pairs[6];
   void parse(char input[]);
 
 private:

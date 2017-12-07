@@ -1,13 +1,14 @@
 #include <CmdExecutor.h>
 #include <pin_config.h>
 #include <EEPROM.h>
-#include <config.h>
 #include <string.h>
 
-static char dev_id[8];
-
+//char CmdExecutor::dev_id[DEVICE_ID_LEN] = {};
+//char CmdExecutor::dev_parent_id[PARENT_DEVICE_ID_LEN] = {};
+SoftSerial *serialw;
 void CmdExecutor::execute_command(char key[], char value[], SoftSerial *serial)
 {
+    serialw = serial;
 
     if (per_strcmp(key, (char *)CMD_SET_APPLIANCE_OUTPUT_VOLTAGE) == 0)
     {
@@ -17,27 +18,40 @@ void CmdExecutor::execute_command(char key[], char value[], SoftSerial *serial)
     else if (per_strcmp(key, (char *)CMD_GET_DEVICE_ID) == 0)
     {
         DEBUG_PRINT(F("Command Matched, getting device ID"));
-        serial->println(this->get_device_id());
+        // serial->println((String)this->get_device_id());
+        this->get_device_id();
+
     }
     else if (per_strcmp(key, (char *)CMD_SET_DEVICE_ID) == 0)
     {
         DEBUG_PRINT(F("Command Matched, setting device ID"));
         this->set_device_id(value);
     }
+    else if (per_strcmp(key, (char *)CMD_GET_PARENT_DEVICE_ID) == 0)
+    {
+        DEBUG_PRINT(F("Command Matched, getting device ID"));
+        //serial->println((String)this->get_parent_device_id());
+        this->get_parent_device_id();
+    }
+    else if (per_strcmp(key, (char *)CMD_SET_PARENT_DEVICE_ID) == 0)
+    {
+        DEBUG_PRINT(F("Command Matched, setting device ID"));
+        this->set_parent_device_id(value);
+    }
     else if (per_strcmp(key, (char *)CMD_GET_DEVICE_TYPE) == 0)
     {
         DEBUG_PRINT(F("Command Matched, getting device TYPE"));
-        serial->println(DEVICE_TYPE);
+        serial->println((String)DEVICE_TYPE);
     }
     else if (per_strcmp(key, (char *)CMD_GET_DEVICE_STATUS) == 0)
     {
         DEBUG_PRINT(F("Command Matched, getting device STATUS"));
-        serial->println(digitalRead(GET_APPLIANCE_ON_OFF_STATUS));
+        serial->println((String)digitalRead(GET_APPLIANCE_ON_OFF_STATUS));
     }
     else if (per_strcmp(key, (char *)CMD_RAISE_TRIGGER) == 0)
     {
         String str = "{\"RTR\":\"";
-        str += this->get_device_id();
+        //str += this->get_device_id();
         str += "\"}";
         serial->println(str);
     }
@@ -52,36 +66,83 @@ void CmdExecutor::set_device_id(char id[])
     EEPROM.begin();
 
     uint8_t i = 0;
-    for (i = 0; i < DEVICE_ID_LEN; i++)
+    uint8_t len = strlen(id);
+    for (i = 0; i < len; i++)
         EEPROM.write(i, id[i]);
 
     //EEPROM.commit();
     EEPROM.end();
 }
-char *CmdExecutor::get_device_id()
+
+void CmdExecutor::set_parent_device_id(char id[])
 {
     EEPROM.begin();
 
-    memset(dev_id, 255, sizeof(char) * DEVICE_ID_LEN);
+    uint8_t i;
+    uint8_t len = strlen(id);
+    for (i = 0; i < len; i++)
+        EEPROM.write(i + DEVICE_ID_LEN, id[i]);
+
+    //EEPROM.commit();
+    EEPROM.end();
+}
+
+void CmdExecutor::get_device_id()
+{
+    EEPROM.begin();
+    // String op = "Notihng 1";
+    // dev_id = (char *)malloc(sizeof(char) * DEVICE_ID_LEN);
+    //memset(this->dev_id, 255, sizeof(char) * DEVICE_ID_LEN);
 
     uint8_t i = 0;
-    uint8_t ch;
+    //   uint8_t ch;
     do
     {
-        ch = EEPROM.read(i);
-        dev_id[i] = (char)ch;
+        // ch = EEPROM.read(i);
+        // this->dev_id[i] = (char)ch;
+        //op+=(String)EEPROM.read(i);
+        serialw->print((char)EEPROM.read(i));
         i++;
-    } while (ch != 255);
+    } while (i < DEVICE_ID_LEN);
 
-    dev_id[i] = '\0';
+    //  this->dev_id[i] = '\0';
 
     //EEPROM.commit();
     EEPROM.end();
 
-    if (i == 1)
-        return (char *)NO_ID;
+    // if (i == 1)
+    //   return (String)NO_ID;
 
-    return dev_id;
+    // return op;
+}
+
+void CmdExecutor::get_parent_device_id()
+{
+    EEPROM.begin();
+
+    //memset(this->dev_parent_id, 255, sizeof(char) * PARENT_DEVICE_ID_LEN);
+
+    uint8_t i = 0;
+    // uint8_t ch;
+    // String op = "Notihng 1";
+    do
+    {
+        //ch = EEPROM.read(i + DEVICE_ID_LEN);
+        //this->dev_parent_id[i] = (char)ch;
+        //op += (String)EEPROM.read(i + DEVICE_ID_LEN);
+        serialw->print((char)EEPROM.read(i + DEVICE_ID_LEN));
+        i++;
+    } while (i < PARENT_DEVICE_ID_LEN);
+
+    // this->dev_parent_id[i] = '\0';
+
+    //EEPROM.commit();
+    EEPROM.end();
+
+    // if (i == 1)
+    //  return (String)NO_ID;
+
+    //  return op;
 }
 
 int CmdExecutor::per_strcmp(char input_key[], char target_key[])

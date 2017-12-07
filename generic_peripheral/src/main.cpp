@@ -19,13 +19,13 @@ void setup()
   //cli();
 
   serial->begin(19200);
-  serial->println(F("Setting up peripheral..."));
+  DEBUG_PRINT(F("Setting up peripheral..."));
 
   pinMode(SET_APPLIANCE_OUTPUT_PIN, OUTPUT);
   pinMode(GET_APPLIANCE_ON_OFF_STATUS, INPUT);
   pinMode(GET_APPLIANCE_TRIGGER, INPUT);
 
-  //  GIMSK |= (1 << PCIE);   // pin change interrupt enable
+  // GIMSK |= (1 << PCIE);   // pin change interrupt enable
   // PCMSK |= (1 << PCINT4);  // pin change interrupt enabled for PCINT4
 
   //MCUCR &= ~(_BV(ISC00));// | _BV(ISC00));      //INT0 on low level
@@ -41,29 +41,34 @@ void loop()
   if (serial->available())
   {
     char ch;
-    uint8_t i = 0;
+    uint8_t len = 0;
     memset(command_buffer, '\0', sizeof(command_buffer));
     while (serial->available())
     {
       ch = serial->read();
       delay(10);
-      command_buffer[i] = ch;
-      i++;
+      command_buffer[len] = ch;
+      len++;
     }
-    command_buffer[i] = '\0';
+    command_buffer[len] = '\0';
 
     DEBUG_PRINT(F("Received String "));
     DEBUG_PRINT(i);
     DEBUG_PRINT(command_buffer);
 
     parser->parse(command_buffer);
+    for (int i = 0; i < parser->total_pairs; i++)
+    {
+      DEBUG_PRINT(parser->pairs[i].key);
+      DEBUG_PRINT(parser->pairs[i].val);
+      executor->execute_command(parser->pairs[i].key, parser->pairs[i].val, serial);
+    }
 
-    DEBUG_PRINT(parser->pairs[0].key);
-    DEBUG_PRINT(parser->pairs[0].val);
-
-    executor->execute_command(parser->pairs[0].key, parser->pairs[0].val, serial);
-    free(parser->pairs[0].key);
-    free(parser->pairs[0].val);
+    for (int i = 0; i < parser->total_pairs; i++)
+    {
+      free(parser->pairs[i].key);
+      free(parser->pairs[i].val);
+    }
 
     serial->flush();
   }

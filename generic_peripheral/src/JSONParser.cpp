@@ -1,8 +1,5 @@
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <JSONParser.h>
@@ -64,14 +61,14 @@ void JSONParser ::parse(char str[])
 
   JSONParser::total_pairs += 1;
 
-  for (i = 0; i < JSONParser::total_pairs; i++)
+/*  for (i = 0; i < JSONParser::total_pairs; i++)
   {
     pairs[i].val = trimwhitespace(pairs[i].val);
     pairs[i].key = trimwhitespace(pairs[i].key);
-  }
+  }*/
 }
 
-char *JSONParser ::trimwhitespace(char *str)
+/*char *JSONParser ::trimwhitespace(char *str)
 {
   char *end;
 
@@ -91,4 +88,4 @@ char *JSONParser ::trimwhitespace(char *str)
   *(end + 1) = 0;
 
   return str;
-}
+}*/
