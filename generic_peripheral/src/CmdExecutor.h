@@ -9,8 +9,6 @@
 
 #define CMD_GET_DEVICE_ID ("GDI")                 //("GET_DEV_ID")
 #define CMD_SET_DEVICE_ID ("SDI")                 //("SET_DEV_ID")
-#define CMD_GET_PARENT_DEVICE_ID ("GPDI")         //("GET_PARENT_DEV_ID")
-#define CMD_SET_PARENT_DEVICE_ID ("SPDI")         //("SET_PARENT_DEV_ID")
 #define CMD_GET_DEVICE_TYPE ("GDT")               //("GET_DEV_TYPE")
 #define CMD_SET_APPLIANCE_OUTPUT_VOLTAGE ("pval") //("Peripheral_value")
 #define CMD_RAISE_TRIGGER ("RTR")                 //("RAISE_TRIGGER")
@@ -28,8 +26,6 @@ private:
   int per_strcmp(char input_key[], char target_key[]);
   void set_device_id(char id[]);
   void get_device_id();
-  void set_parent_device_id(char id[]);
-  void get_parent_device_id();
 };
 
 #endif
