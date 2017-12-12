@@ -34,13 +34,13 @@ void CmdExecutor::execute_command(char key[], char value[], SoftSerial *serial)
         DEBUG_PRINT(F("Command Matched, getting device STATUS"));
         serial->println((String)digitalRead(GET_APPLIANCE_ON_OFF_STATUS));
     }
-    else if (per_strcmp(key, (char *)CMD_RAISE_TRIGGER) == 0)
+/*    else if (per_strcmp(key, (char *)CMD_RAISE_TRIGGER) == 0)
     {
         String str = "{\"RTR\":\"";
         //str += this->get_device_id();
         str += "\"}";
         serial->println(str);
-    }
+    }*/
     /* else
     {
         serial->println(F("Command does not exists"));

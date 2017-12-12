@@ -22,8 +22,9 @@ void setup()
   DEBUG_PRINT(F("Setting up peripheral..."));
 
   pinMode(SET_APPLIANCE_OUTPUT_PIN, OUTPUT);
+  pinMode(SET_APPLIANCE_INDICATION_IS_ACTIVE, OUTPUT);
   pinMode(GET_APPLIANCE_ON_OFF_STATUS, INPUT);
-  pinMode(GET_APPLIANCE_TRIGGER, INPUT);
+  //pinMode(GET_APPLIANCE_TRIGGER, INPUT);
 
   // GIMSK |= (1 << PCIE);   // pin change interrupt enable
   // PCMSK |= (1 << PCINT4);  // pin change interrupt enabled for PCINT4
@@ -33,6 +34,8 @@ void setup()
   //GIMSK = 1 << INT0; //Enable INT0
 
   //  sei();                  // enable interrupts
+
+  digitalWrite(SET_APPLIANCE_INDICATION_IS_ACTIVE, 1);
 }
 
 void loop()
@@ -72,7 +75,7 @@ void loop()
 
     serial->flush();
   }
-  else
+  /* else
   {
     DEBUG_PRINT(F("Checking for trigger"));
     DEBUG_PRINT(GET_APPLIANCE_TRIGGER);
@@ -81,8 +84,9 @@ void loop()
     {
       executor->execute_command((char *)CMD_RAISE_TRIGGER, (char *)"", serial);
     }
-    delay(1000);
-  }
+  }*/
+
+  delay(1000);
 }
 
 //ISR(PCINT0_vect)

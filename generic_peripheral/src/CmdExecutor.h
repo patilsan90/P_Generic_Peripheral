@@ -13,7 +13,6 @@
 #define CMD_SET_APPLIANCE_OUTPUT_VOLTAGE ("pval") //("Peripheral_value")
 #define CMD_RAISE_TRIGGER ("RTR")                 //("RAISE_TRIGGER")
 #define CMD_GET_DEVICE_STATUS ("GDS")             //("GET_DEV_STATUS")
-
 #define DEVICE_TYPE ("DG1") //("DEV_GEN_1")
 #define NO_ID ("NO_ID")
 
